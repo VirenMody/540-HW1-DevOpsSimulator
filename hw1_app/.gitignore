@@ -4,3 +4,6 @@
 
 #Ignore IntelliJ IDEA files
 .idea/
+
+#Ignore IML file
+hw1_app.iml
