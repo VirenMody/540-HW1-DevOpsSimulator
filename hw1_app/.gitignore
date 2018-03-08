@@ -1,9 +1,0 @@
-
-# Ignore java out files
-/out
-
-#Ignore IntelliJ IDEA files
-.idea/
-
-#Ignore IML file
-hw1_app.iml
