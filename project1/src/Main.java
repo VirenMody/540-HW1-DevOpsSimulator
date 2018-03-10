@@ -3,6 +3,13 @@ import org.eclipse.egit.github.core.*;
 import org.eclipse.egit.github.core.client.GitHubClient;
 import org.eclipse.egit.github.core.service.*;
 import com.google.gson.*;
+import org.gitlab.api.GitlabAPI;
+import org.gitlab.api.models.GitlabProject;
+import org.gitlab4j.api.GitLabApi;
+import org.gitlab4j.api.GitLabApiException;
+import org.gitlab4j.api.models.Project;
+
+
 import java.util.*;
 import java.io.*;
 
@@ -70,5 +77,55 @@ public class Main {
                 System.err.println("Caught IOException: " + e.getMessage());
             }
         }
+
+
+        String gitlabHostUrl = "http://10.0.2.15";
+        String apiAccessToken = "RDtCnzMezmjpih4u6VDm";
+        // Retrieve Gitlab API Access
+        GitlabAPI gitlabAPI = GitlabAPI.connect(gitlabHostUrl, apiAccessToken);
+        try {
+            System.out.println("Current Number of Projects: " + gitlabAPI.getProjects().size());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+//        // Retrieve Gitlab API Access
+//        GitLabApi gitLabApi = null;
+//        try {
+//            gitLabApi = new GitLabApi(GitLabApi.ApiVersion.V3, "http://10.0.2.15/", "RDtCnzMezmjpih4u6VDm");
+//            System.out.println("gitLabApi = " + gitLabApi);
+//        } catch (Exception e) {
+//            System.err.println("Caught Exception: " + e.getMessage());
+//            e.printStackTrace();
+//        }
+//
+//        // Get the list of projects your account has access to
+//        try {
+//            List<Project> projects = gitLabApi.getProjectApi().getProjects();
+//        } catch (GitLabApiException e) {
+//            System.err.println("Caught Exception: " + e.getMessage());
+//            //e.printStackTrace();
+//        }
+
+
+        // Create a new project
+        GitlabProject newProject = null;
+        try {
+            newProject = gitlabAPI.createProject("test 2");
+        } catch (Exception e) {
+            System.err.println("Caught IOException: " + e.getMessage());
+        }
+        //System.out.println("Current Number of Projects: " + gitlabAPI.getProjects().size());
+        System.out.println("Added project: " + newProject.getName());
+
+        // Create a new project with a given repository URL
+        GitlabProject newProject2 = null;
+        try {
+            newProject2 = gitlabAPI.createProject("Maven-Hello-Imported");
+        } catch (Exception e) {
+            System.err.println("Caught IOException: " + e.getMessage());
+        }
+        //System.out.println("Current Number of Projects: " + gitlabAPI.getProjects().size());
+        System.out.println("Added project: " + newProject2.getName());
     }
 }
