@@ -7,6 +7,7 @@ import org.gitlab.api.GitlabAPI;
 import org.gitlab.api.models.GitlabProject;
 import org.gitlab4j.api.GitLabApi;
 import org.gitlab4j.api.GitLabApiException;
+import org.gitlab4j.api.ProjectApi;
 import org.gitlab4j.api.models.Project;
 
 
@@ -14,6 +15,7 @@ import java.util.*;
 import java.io.*;
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.errors.GitAPIException;
+import org.gitlab4j.api.models.Visibility;
 
 public class Main {
 
@@ -75,70 +77,43 @@ public class Main {
         }
 
 
-        //Beginning of JGit library usage
-        String REMOTE_URL = "https://github.com/guillermokrh/simple-java-maven-app";
-        String LOCAL_PATH = "/Users/guillermo/cs540/jgit_testing/";
-        System.out.println("Cloning from " + REMOTE_URL + " to " + LOCAL_PATH);
-
-        File localPath = new File(LOCAL_PATH);
-
-        try (Git result = Git.cloneRepository()
-                .setURI(REMOTE_URL)
-                .setDirectory(localPath)
-                .call()) {
-            // Note: the call() returns an opened repository already which needs to be closed to avoid file handle leaks!
-            System.out.println("Repository Made: " + result.getRepository().getDirectory());
-        } catch(GitAPIException g){
-            System.out.println(g);
-        }
+//        //Beginning of JGit library usage
+//        String REMOTE_URL = "https://github.com/guillermokrh/simple-java-maven-app";
+//        String LOCAL_PATH = "/Users/guillermo/cs540/jgit_testing/";
+//        System.out.println("Cloning from " + REMOTE_URL + " to " + LOCAL_PATH);
+//
+//        File localPath = new File(LOCAL_PATH);
+//
+//        try (Git result = Git.cloneRepository()
+//                .setURI(REMOTE_URL)
+//                .setDirectory(localPath)
+//                .call()) {
+//            // Note: the call() returns an opened repository already which needs to be closed to avoid file handle leaks!
+//            System.out.println("Repository Made: " + result.getRepository().getDirectory());
+//        } catch(GitAPIException g){
+//            System.out.println(g);
+//        }
 
         String gitlabHostUrl = "http://10.0.2.15";
         String apiAccessToken = "RDtCnzMezmjpih4u6VDm";
+
         // Retrieve Gitlab API Access
-        GitlabAPI gitlabAPI = GitlabAPI.connect(gitlabHostUrl, apiAccessToken);
+        GitLabApi gitLabApi = null;
         try {
-            System.out.println("Current Number of Projects: " + gitlabAPI.getProjects().size());
-        } catch (IOException e) {
+            gitLabApi = new GitLabApi(GitLabApi.ApiVersion.V3, gitlabHostUrl, apiAccessToken);
+            System.out.println("gitLabApi = " + gitLabApi);
+        } catch (Exception e) {
+            System.err.println("Caught Exception: " + e.getMessage());
             e.printStackTrace();
         }
 
-//        // Retrieve Gitlab API Access
-//        GitLabApi gitLabApi = null;
-//        try {
-//            gitLabApi = new GitLabApi(GitLabApi.ApiVersion.V3, "http://10.0.2.15/", "RDtCnzMezmjpih4u6VDm");
-//            System.out.println("gitLabApi = " + gitLabApi);
-//        } catch (Exception e) {
-//            System.err.println("Caught Exception: " + e.getMessage());
-//            e.printStackTrace();
-//        }
-//
-//        // Get the list of projects your account has access to
-//        try {
-//            List<Project> projects = gitLabApi.getProjectApi().getProjects();
-//        } catch (GitLabApiException e) {
-//            System.err.println("Caught Exception: " + e.getMessage());
-//            //e.printStackTrace();
-//        }
-
-
-        // Create a new project
-        GitlabProject newProject = null;
+        // Create a new project on Gitlab and import from existing Github Repository
+        ProjectApi projectApi = gitLabApi.getProjectApi();
         try {
-            newProject = gitlabAPI.createProject("test 2");
-        } catch (Exception e) {
-            System.err.println("Caught IOException: " + e.getMessage());
+            Project newProject = projectApi.createProject("Maven-Hello-TestImport2", null, "test import", null, null, null, null, Visibility.PUBLIC, null, "https://github.com/amuniz/maven-helloworld.git");
+        } catch (GitLabApiException e) {
+            System.err.println("Caught GitlabApiException: " + e.getMessage());
         }
-        //System.out.println("Current Number of Projects: " + gitlabAPI.getProjects().size());
-        System.out.println("Added project: " + newProject.getName());
 
-        // Create a new project with a given repository URL
-        GitlabProject newProject2 = null;
-        try {
-            newProject2 = gitlabAPI.createProject("Maven-Hello-Imported");
-        } catch (Exception e) {
-            System.err.println("Caught IOException: " + e.getMessage());
-        }
-        //System.out.println("Current Number of Projects: " + gitlabAPI.getProjects().size());
-        System.out.println("Added project: " + newProject2.getName());
     }
 }
