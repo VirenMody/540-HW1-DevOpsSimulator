@@ -5,6 +5,8 @@ import org.eclipse.egit.github.core.service.*;
 import com.google.gson.*;
 import java.util.*;
 import java.io.*;
+import org.eclipse.jgit.api.Git;
+import org.eclipse.jgit.api.errors.GitAPIException;
 
 public class Main {
 
@@ -22,19 +24,9 @@ public class Main {
 
         ContentsService contentsService = new ContentsService();
 
-        /*
-        List<Repository> repositoryList = null;
-        try {
-            repositoryList = service.getRepositories("guillermokrh");
-        }
-        catch (IOException e){
-            System.err.println("Caught IOException: " + e.getMessage());
-        }
-        for (Repository repo : repositoryList)
-            System.out.println(repo.getName() + " Watchers: " + repo.getWatchers());
-        */
 
         String java_query = "language:java";
+        //Query searches for the simple-java-maven-app project inside the jenkins-docs org
         String query = "simple-java-maven-app org:jenkins-docs";
         List<SearchRepository> searchRepositoryList = null;
 
@@ -57,10 +49,14 @@ public class Main {
             System.out.println("Name: " + searchRepo.getName());
             System.out.println("ID: " + searchRepo.getId());
 
+            //Create RepositoryID object based on current repo being searched
             RepositoryId repositoryId = new RepositoryId(searchRepo.getOwner(), searchRepo.getName());
             System.out.println("Repo ID: " + repositoryId.toString());
             try {
+                //Get the repository contents of that repo
                 List<RepositoryContents> repositoryContents = contentsService.getContents(repositoryId);
+
+                //Print the file names of the contents of the repo
                 for (RepositoryContents repo: repositoryContents){
                     System.out.println("Get Name: " + repo.getName());
                 }
@@ -69,6 +65,24 @@ public class Main {
             catch (IOException e){
                 System.err.println("Caught IOException: " + e.getMessage());
             }
+        }
+
+
+        //Beginning of JGit library usage
+        String REMOTE_URL = "https://github.com/guillermokrh/simple-java-maven-app";
+        String LOCAL_PATH = "/Users/guillermo/cs540/jgit_testing/";
+        System.out.println("Cloning from " + REMOTE_URL + " to " + LOCAL_PATH);
+
+        File localPath = new File(LOCAL_PATH);
+
+        try (Git result = Git.cloneRepository()
+                .setURI(REMOTE_URL)
+                .setDirectory(localPath)
+                .call()) {
+            // Note: the call() returns an opened repository already which needs to be closed to avoid file handle leaks!
+            System.out.println("Repository Made: " + result.getRepository().getDirectory());
+        } catch(GitAPIException g){
+            System.out.println(g);
         }
     }
 }
