@@ -15,6 +15,7 @@ import java.util.*;
 import java.io.*;
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.errors.GitAPIException;
+import org.gitlab4j.api.models.ProjectHook;
 import org.gitlab4j.api.models.Visibility;
 
 public class Main {
@@ -103,17 +104,30 @@ public class Main {
             gitLabApi = new GitLabApi(GitLabApi.ApiVersion.V3, gitlabHostUrl, apiAccessToken);
             System.out.println("gitLabApi = " + gitLabApi);
         } catch (Exception e) {
-            System.err.println("Caught Exception: " + e.getMessage());
+            System.err.println("Caught Exception for Gitlab API Access: " + e.getMessage());
             e.printStackTrace();
         }
 
         // Create a new project on Gitlab and import from existing Github Repository
+        Project newProject = null;
         ProjectApi projectApi = gitLabApi.getProjectApi();
+        String projectName = "test project name";
+        String projectDescription = "Test Description";
+        String importUrl = "https://github.com/amuniz/maven-helloworld.git";
         try {
-            Project newProject = projectApi.createProject("Maven-Hello-TestImport2", null, "test import", null, null, null, null, Visibility.PUBLIC, null, "https://github.com/amuniz/maven-helloworld.git");
+            newProject = projectApi.createProject(projectName, null, projectDescription, null, null, null, null, Visibility.PUBLIC, null, importUrl);
         } catch (GitLabApiException e) {
-            System.err.println("Caught GitlabApiException: " + e.getMessage());
+            System.err.println("Caught GitlabApiException for Project Creation: " + e.getMessage());
         }
 
+        // Create a webhook for the project
+        String webhookUrl = "http://localhost:8081/project/Maven-Hello-TestImport2";
+        ProjectHook webhook = null;
+        try {
+            webhook = projectApi.addHook(newProject, webhookUrl, true, false, false);
+        } catch (GitLabApiException e) {
+            System.err.println("Caught GitlabApiException for Webhook: " + e.getMessage());
+        }
+        System.out.println("Webhook: " + webhook);
     }
 }
