@@ -23,5 +23,5 @@ dependencies {
 
     compile group: 'org.gitlab', name: 'java-gitlab-api', version: '4.0.0'
 
-    compile 'com.offbytwo.jenkins:jenkins-client:0.3.7'
+    compile group: 'com.offbytwo.jenkins', name: 'jenkins-client', version: '0.3.7'
 }
