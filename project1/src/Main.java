@@ -33,7 +33,6 @@ public class Main {
 
     public static void main(String[] args) {
         // write your code here
-/*
         System.out.println("Hello.");
 
         GitHubClient client = new GitHubClient();
@@ -90,69 +89,80 @@ public class Main {
         }
 
 
-        //Beginning of JGit library usage
-        String REMOTE_URL = "https://github.com/guillermokrh/simple-java-maven-app";
-        String LOCAL_PATH = "/Users/guillermo/cs540/jgit_testing/";
-        System.out.println("Cloning from " + REMOTE_URL + " to " + LOCAL_PATH);
+        //TODO Update following variables based on repositories from Github search
+        String projectName = "maven-helloworld";
+        String username = "amuniz";
+        String repoURL = "https://github.com/" + username + "/" + projectName + ".git";
+        //String repoURL = "https://github.com/guillermokrh/simple-java-maven-app";
+        String LOCAL_PATH = "/home/virenmody/ClonedRepos/" + projectName;
+        //String LOCAL_PATH = "/Users/guillermo/cs540/jgit_testing/";
 
-        File localPath = new File(LOCAL_PATH);
-
-        try (Git result = Git.cloneRepository()
-                .setURI(REMOTE_URL)
-                .setDirectory(localPath)
-                .call()) {
-            // Note: the call() returns an opened repository already which needs to be closed to avoid file handle leaks!
-            System.out.println("Repository Made: " + result.getRepository().getDirectory());
-        } catch(GitAPIException g){
-            System.out.println(g);
+        // Clone the Github repository (RESOURCE: http://www.vogella.com/tutorials/JGit/article.html)
+        Git clonedRepo = null;
+        try {
+            System.out.println("Cloning GitHub repo " + projectName + " to local directory: " + LOCAL_PATH);
+            clonedRepo = Git.cloneRepository()
+                    .setURI(repoURL)
+                    .setDirectory(new File(LOCAL_PATH))
+                    .call();
+        } catch (GitAPIException e) {
+            System.err.println("Caught GitAPIException: " + e.getMessage());
         }
 
+        //TODO Please update the following for your setup
         String gitlabHostUrl = "http://10.0.2.15";
         String apiAccessToken = "RDtCnzMezmjpih4u6VDm";
 
-        // Retrieve Gitlab API Access
+        // Retrieve Gitlab API Instance
         GitLabApi gitLabApi = null;
         try {
             gitLabApi = new GitLabApi(GitLabApi.ApiVersion.V3, gitlabHostUrl, apiAccessToken);
-            System.out.println("gitLabApi = " + gitLabApi);
+            System.out.println("Gitlab API Instance = " + gitLabApi);
         } catch (Exception e) {
             System.err.println("Caught Exception for Gitlab API Access: " + e.getMessage());
             e.printStackTrace();
         }
 
-        // Create a new project on Gitlab and import from existing Github Repository
+        // Create a new empty project on Gitlab
         Project newProject = null;
         ProjectApi projectApi = gitLabApi.getProjectApi();
-        String projectName = "test project name";
-        String projectDescription = "Test Description";
-        String importUrl = "https://github.com/amuniz/maven-helloworld.git";
+        //TODO First check if this project name already exists in Gitlab
+        String projectDescription = "Pulled from Github.com: " + username + " : " + projectName;
+        //String importUrl = "https://github.com/amuniz/maven-helloworld.git";
+        System.out.println("Creating Gitlab Project: " + projectName);
         try {
-            newProject = projectApi.createProject(projectName, null, projectDescription, null, null, null, null, Visibility.PUBLIC, null, importUrl);
+            newProject = projectApi.createProject(projectName, null, projectDescription, null, null, null, null, Visibility.PUBLIC, null, null);
+            //newProject = projectApi.createProject(projectName, null, projectDescription, null, null, null, null, Visibility.PUBLIC, null, importUrl);
         } catch (GitLabApiException e) {
             System.err.println("Caught GitlabApiException for Project Creation: " + e.getMessage());
         }
 
-        // Create a webhook for the project
-        String webhookUrl = "http://localhost:8081/project/Maven-Hello-TestImport2";
+        // Create a Jenkins webhook for the project
+        //TODO Please update the localhost/ip:port number according to your Jenkins setup (localhost = 10.0.2.15)
+        String jenkinsHostUrl = "http://10.0.2.15:8081";
+        String webhookUrl = jenkinsHostUrl + "/project/Maven-Hello-TestImport2";
         ProjectHook webhook = null;
+        System.out.println("Creating Gitlab to Jenkins webhook: " + webhookUrl);
         try {
             webhook = projectApi.addHook(newProject, webhookUrl, true, false, false);
         } catch (GitLabApiException e) {
             System.err.println("Caught GitlabApiException for Webhook: " + e.getMessage());
         }
-        System.out.println("Webhook: " + webhook);
-*/
 
         // Create a Jenkins Job for the project
+        // TODO Please update the username and password according to your Jenkins setup
+        String jenkinsUsername = "admin";
+        String jenkinsPassword = "admin";
+        System.out.println("Creating a Jenkins job for this project: " + jenkinsHostUrl + "/job/" + projectName);
         try {
-            URI jenkinsUri = new URI("http://localhost:8081/");
+            URI jenkinsUri = new URI(jenkinsHostUrl + "/");
             JenkinsServer jenkins = null;
-            jenkins = new JenkinsServer(jenkinsUri, "admin", "admin");
-            System.out.println("Jenkins reference: " + jenkins.isRunning()  );
+            jenkins = new JenkinsServer(jenkinsUri, jenkinsUsername, jenkinsPassword);
+            System.out.println("\t - Jenkins Running?: " + jenkins.isRunning()  );
             String jobXml = "<project><actions/><description/><keepDependencies>false</keepDependencies><properties><jenkins.model.BuildDiscarderProperty><strategy class=\"hudson.tasks.LogRotator\"><daysToKeep>-1</daysToKeep><numToKeep>3</numToKeep><artifactDaysToKeep>-1</artifactDaysToKeep><artifactNumToKeep>-1</artifactNumToKeep></strategy></jenkins.model.BuildDiscarderProperty><com.dabsquared.gitlabjenkins.connection.GitLabConnectionProperty plugin=\"gitlab-plugin@1.5.3\"><gitLabConnection>GitlabViren</gitLabConnection></com.dabsquared.gitlabjenkins.connection.GitLabConnectionProperty><org.jenkinsci.plugins.gitlablogo.GitlabLogoProperty plugin=\"gitlab-logo@1.0.3\"><repositoryName>Administrator/540-DevOps-Simulation</repositoryName></org.jenkinsci.plugins.gitlablogo.GitlabLogoProperty></properties><scm class=\"hudson.plugins.git.GitSCM\" plugin=\"git@3.8.0\"><configVersion>2</configVersion><userRemoteConfigs><hudson.plugins.git.UserRemoteConfig><url>http://10.0.2.15/root/540-DevOps-Simulation.git</url><credentialsId>449eaaad-4ce3-4cd7-88e4-fbda5b6cb318</credentialsId></hudson.plugins.git.UserRemoteConfig></userRemoteConfigs><branches><hudson.plugins.git.BranchSpec><name>*/master</name></hudson.plugins.git.BranchSpec></branches><doGenerateSubmoduleConfigurations>false</doGenerateSubmoduleConfigurations><browser class=\"hudson.plugins.git.browser.GitLab\"><url>http://10.0.2.15/root/540-DevOps-Simulation</url><version>10.5</version></browser><submoduleCfg class=\"list\"/><extensions/></scm><canRoam>true</canRoam><disabled>false</disabled><blockBuildWhenDownstreamBuilding>false</blockBuildWhenDownstreamBuilding><blockBuildWhenUpstreamBuilding>false</blockBuildWhenUpstreamBuilding><triggers><com.dabsquared.gitlabjenkins.GitLabPushTrigger plugin=\"gitlab-plugin@1.5.3\"><spec/><triggerOnPush>true</triggerOnPush><triggerOnMergeRequest>true</triggerOnMergeRequest><triggerOnPipelineEvent>false</triggerOnPipelineEvent><triggerOnAcceptedMergeRequest>false</triggerOnAcceptedMergeRequest><triggerOnClosedMergeRequest>false</triggerOnClosedMergeRequest><triggerOnApprovedMergeRequest>true</triggerOnApprovedMergeRequest><triggerOpenMergeRequestOnPush>never</triggerOpenMergeRequestOnPush><triggerOnNoteRequest>true</triggerOnNoteRequest><noteRegex>Jenkins please retry a build</noteRegex><ciSkip>true</ciSkip><skipWorkInProgressMergeRequest>true</skipWorkInProgressMergeRequest><setBuildDescription>true</setBuildDescription><branchFilterType>All</branchFilterType><includeBranchesSpec/><excludeBranchesSpec/><targetBranchRegex/><secretToken>{AQAAABAAAAAQaaBNEMvEXKTXZ8mdW7/jX86kI413u5ByjTgaQKU7jTk=}</secretToken></com.dabsquared.gitlabjenkins.GitLabPushTrigger></triggers><concurrentBuild>false</concurrentBuild><builders/><publishers><com.dabsquared.gitlabjenkins.publisher.GitLabCommitStatusPublisher plugin=\"gitlab-plugin@1.5.3\"><name>jenkins</name><markUnstableAsSuccess>false</markUnstableAsSuccess></com.dabsquared.gitlabjenkins.publisher.GitLabCommitStatusPublisher></publishers><buildWrappers><hudson.plugins.timestamper.TimestamperBuildWrapper plugin=\"timestamper@1.8.9\"/></buildWrappers></project>";
             //jenkins.createJob("JenkinsApiTest", jobXml);
             Map<String, Job> jobs = jenkins.getJobs();
-            System.out.println("jobs: " + jobs);
+            System.out.println("\t - Jobs: " + jobs);
 
         } catch (URISyntaxException e) {
             System.err.println("Caught URISyntaxException for Jenkins Server Retrieval: " + e.getMessage());
@@ -162,30 +172,28 @@ public class Main {
         }
 
 
-        // Clone a repository from Github and push it to Gitlab (Resource: https://stackoverflow.com/questions/13446842/how-do-i-do-git-push-with-jgit)
-
-        Git clonedRepo = null;
+        // Push repository to our local Gitlab server
+        System.out.println("Pushing project to Gitlab repository: " + projectName);
         try {
-            System.out.println("Cloning repo to local directory");
-            // Clone repository to local directory
-            clonedRepo = Git.cloneRepository()
-                    .setURI("https://github.com/amuniz/maven-helloworld.git")
-                    .setDirectory(new File("/home/virenmody/repos/maven-helloworld"))
-                    .call();
-
-            System.out.println("Removing remote origin");
+            //  Remove origin from repo (RESOURCE: https://stackoverflow.com/questions/12799573/add-remote-via-jgit)
+            System.out.println("\t - Removing remote Github repo as origin from repo");
             StoredConfig config = clonedRepo.getRepository().getConfig();
             config.unsetSection("remote", "origin");
             config.save();
 
-            System.out.println("Adding remote repo");
+            // Push the repo to Gitlab (Resource: https://stackoverflow.com/questions/13446842/how-do-i-do-git-push-with-jgit)
+            System.out.println("\t - Adding remote Gitlab repo as origin to repo");
+
             RemoteAddCommand remoteAddCommand = clonedRepo.remoteAdd();
             remoteAddCommand.setName("origin");
-            remoteAddCommand.setUri(new URIish("http://10.0.2.15/root/test.git"));
+            remoteAddCommand.setUri(new URIish(gitlabHostUrl + "/root/" + projectName + ".git"));
             remoteAddCommand.call();
 
-            System.out.println("Pushing repo");
-            UsernamePasswordCredentialsProvider credProvider = new UsernamePasswordCredentialsProvider("root", "rootroot");
+            System.out.println("\t - Pushing repo with proper credentials to Gitlab Server");
+            // TODO Please update Gitlab username and password according to your Gitlab setup
+            String gitLabUsername = "root";
+            String gitLabPassword = "rootroot";
+            UsernamePasswordCredentialsProvider credProvider = new UsernamePasswordCredentialsProvider(gitLabUsername, gitLabPassword);
             PushCommand pushCommand = clonedRepo.push();
             pushCommand.setCredentialsProvider(credProvider);
             pushCommand.call();
