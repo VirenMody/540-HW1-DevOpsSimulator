@@ -6,6 +6,12 @@ import org.eclipse.egit.github.core.*;
 import org.eclipse.egit.github.core.client.GitHubClient;
 import org.eclipse.egit.github.core.service.*;
 import com.google.gson.*;
+import org.eclipse.jgit.api.PushCommand;
+import org.eclipse.jgit.api.RemoteAddCommand;
+import org.eclipse.jgit.internal.storage.file.FileRepository;
+import org.eclipse.jgit.lib.StoredConfig;
+import org.eclipse.jgit.transport.URIish;
+import org.eclipse.jgit.transport.UsernamePasswordCredentialsProvider;
 import org.gitlab.api.GitlabAPI;
 import org.gitlab.api.models.GitlabProject;
 import org.gitlab4j.api.GitLabApi;
@@ -144,7 +150,7 @@ public class Main {
             jenkins = new JenkinsServer(jenkinsUri, "admin", "admin");
             System.out.println("Jenkins reference: " + jenkins.isRunning()  );
             String jobXml = "<project><actions/><description/><keepDependencies>false</keepDependencies><properties><jenkins.model.BuildDiscarderProperty><strategy class=\"hudson.tasks.LogRotator\"><daysToKeep>-1</daysToKeep><numToKeep>3</numToKeep><artifactDaysToKeep>-1</artifactDaysToKeep><artifactNumToKeep>-1</artifactNumToKeep></strategy></jenkins.model.BuildDiscarderProperty><com.dabsquared.gitlabjenkins.connection.GitLabConnectionProperty plugin=\"gitlab-plugin@1.5.3\"><gitLabConnection>GitlabViren</gitLabConnection></com.dabsquared.gitlabjenkins.connection.GitLabConnectionProperty><org.jenkinsci.plugins.gitlablogo.GitlabLogoProperty plugin=\"gitlab-logo@1.0.3\"><repositoryName>Administrator/540-DevOps-Simulation</repositoryName></org.jenkinsci.plugins.gitlablogo.GitlabLogoProperty></properties><scm class=\"hudson.plugins.git.GitSCM\" plugin=\"git@3.8.0\"><configVersion>2</configVersion><userRemoteConfigs><hudson.plugins.git.UserRemoteConfig><url>http://10.0.2.15/root/540-DevOps-Simulation.git</url><credentialsId>449eaaad-4ce3-4cd7-88e4-fbda5b6cb318</credentialsId></hudson.plugins.git.UserRemoteConfig></userRemoteConfigs><branches><hudson.plugins.git.BranchSpec><name>*/master</name></hudson.plugins.git.BranchSpec></branches><doGenerateSubmoduleConfigurations>false</doGenerateSubmoduleConfigurations><browser class=\"hudson.plugins.git.browser.GitLab\"><url>http://10.0.2.15/root/540-DevOps-Simulation</url><version>10.5</version></browser><submoduleCfg class=\"list\"/><extensions/></scm><canRoam>true</canRoam><disabled>false</disabled><blockBuildWhenDownstreamBuilding>false</blockBuildWhenDownstreamBuilding><blockBuildWhenUpstreamBuilding>false</blockBuildWhenUpstreamBuilding><triggers><com.dabsquared.gitlabjenkins.GitLabPushTrigger plugin=\"gitlab-plugin@1.5.3\"><spec/><triggerOnPush>true</triggerOnPush><triggerOnMergeRequest>true</triggerOnMergeRequest><triggerOnPipelineEvent>false</triggerOnPipelineEvent><triggerOnAcceptedMergeRequest>false</triggerOnAcceptedMergeRequest><triggerOnClosedMergeRequest>false</triggerOnClosedMergeRequest><triggerOnApprovedMergeRequest>true</triggerOnApprovedMergeRequest><triggerOpenMergeRequestOnPush>never</triggerOpenMergeRequestOnPush><triggerOnNoteRequest>true</triggerOnNoteRequest><noteRegex>Jenkins please retry a build</noteRegex><ciSkip>true</ciSkip><skipWorkInProgressMergeRequest>true</skipWorkInProgressMergeRequest><setBuildDescription>true</setBuildDescription><branchFilterType>All</branchFilterType><includeBranchesSpec/><excludeBranchesSpec/><targetBranchRegex/><secretToken>{AQAAABAAAAAQaaBNEMvEXKTXZ8mdW7/jX86kI413u5ByjTgaQKU7jTk=}</secretToken></com.dabsquared.gitlabjenkins.GitLabPushTrigger></triggers><concurrentBuild>false</concurrentBuild><builders/><publishers><com.dabsquared.gitlabjenkins.publisher.GitLabCommitStatusPublisher plugin=\"gitlab-plugin@1.5.3\"><name>jenkins</name><markUnstableAsSuccess>false</markUnstableAsSuccess></com.dabsquared.gitlabjenkins.publisher.GitLabCommitStatusPublisher></publishers><buildWrappers><hudson.plugins.timestamper.TimestamperBuildWrapper plugin=\"timestamper@1.8.9\"/></buildWrappers></project>";
-            jenkins.createJob("JenkinsApiTest", jobXml);
+            //jenkins.createJob("JenkinsApiTest", jobXml);
             Map<String, Job> jobs = jenkins.getJobs();
             System.out.println("jobs: " + jobs);
 
@@ -155,5 +161,41 @@ public class Main {
             e.printStackTrace();
         }
 
+
+        // Clone a repository from Github and push it to Gitlab (Resource: https://stackoverflow.com/questions/13446842/how-do-i-do-git-push-with-jgit)
+
+        Git clonedRepo = null;
+        try {
+            System.out.println("Cloning repo to local directory");
+            // Clone repository to local directory
+            clonedRepo = Git.cloneRepository()
+                    .setURI("https://github.com/amuniz/maven-helloworld.git")
+                    .setDirectory(new File("/home/virenmody/repos/maven-helloworld"))
+                    .call();
+
+            System.out.println("Removing remote origin");
+            StoredConfig config = clonedRepo.getRepository().getConfig();
+            config.unsetSection("remote", "origin");
+            config.save();
+
+            System.out.println("Adding remote repo");
+            RemoteAddCommand remoteAddCommand = clonedRepo.remoteAdd();
+            remoteAddCommand.setName("origin");
+            remoteAddCommand.setUri(new URIish("http://10.0.2.15/root/test.git"));
+            remoteAddCommand.call();
+
+            System.out.println("Pushing repo");
+            UsernamePasswordCredentialsProvider credProvider = new UsernamePasswordCredentialsProvider("root", "rootroot");
+            PushCommand pushCommand = clonedRepo.push();
+            pushCommand.setCredentialsProvider(credProvider);
+            pushCommand.call();
+
+        } catch (GitAPIException e) {
+            System.err.println("Caught GitAPIException: " + e.getMessage());
+        } catch (URISyntaxException e) {
+            System.err.println("Caught URISyntaxException: " + e.getMessage());
+        } catch (IOException e) {
+            System.err.println("Caught IOException: " + e.getMessage());
+        }
     }
 }
