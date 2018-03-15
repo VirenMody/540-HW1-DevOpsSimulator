@@ -90,8 +90,14 @@ public class Main {
 
 
         //TODO Update following variables based on repositories from Github search
-        String projectName = "maven-helloworld";
-        String username = "amuniz";
+//        String projectName = "maven-helloworld";
+//        String username = "amuniz";
+        String projectName = "simple-java-maven-app";
+        String username = "jenkins-docs";
+//        String projectName = "maven-helloworld";
+//        String username = "amuniz";
+//        String projectName = "maven-helloworld";
+//        String username = "amuniz";
         String repoURL = "https://github.com/" + username + "/" + projectName + ".git";
         //String repoURL = "https://github.com/guillermokrh/simple-java-maven-app";
         String LOCAL_PATH = "/home/virenmody/ClonedRepos/" + projectName;
@@ -129,7 +135,7 @@ public class Main {
         //TODO First check if this project name already exists in Gitlab
         String projectDescription = "Pulled from Github.com: " + username + " : " + projectName;
         //String importUrl = "https://github.com/amuniz/maven-helloworld.git";
-        System.out.println("Creating Gitlab Project: " + projectName);
+        System.out.println("Creating Gitlab Project: " + projectName + " at " + gitlabHostUrl + "/root/"+projectName);
         try {
             newProject = projectApi.createProject(projectName, null, projectDescription, null, null, null, null, Visibility.PUBLIC, null, null);
             //newProject = projectApi.createProject(projectName, null, projectDescription, null, null, null, null, Visibility.PUBLIC, null, importUrl);
@@ -140,7 +146,9 @@ public class Main {
         // Create a Jenkins webhook for the project
         //TODO Please update the localhost/ip:port number according to your Jenkins setup (localhost = 10.0.2.15)
         String jenkinsHostUrl = "http://10.0.2.15:8081";
-        String webhookUrl = jenkinsHostUrl + "/project/Maven-Hello-TestImport2";
+        //String webhookUrl = jenkinsHostUrl + "/project/" + projectName;
+        //String webhookUrl = jenkinsHostUrl + "/project/Maven-Hello-TestImport2";
+        String webhookUrl = jenkinsHostUrl + "/project/simple-java-maven-app";
         ProjectHook webhook = null;
         System.out.println("Creating Gitlab to Jenkins webhook: " + webhookUrl);
         try {
