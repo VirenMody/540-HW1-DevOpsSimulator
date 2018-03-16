@@ -133,10 +133,13 @@ public class Main {
         //TODO Update following variables based on repositories from Github search
 //        String projectName = "maven-helloworld";
 //        String username = "amuniz";
-        String projectName = "simple-java-maven-app";
-        String username = "jenkins-docs";
-//        String projectName = "maven-helloworld";
-//        String username = "amuniz";
+
+//        String projectName = "simple-java-maven-app";  // Jenkinsfile not found because its in a subdirectory
+//        String username = "jenkins-docs";
+
+        String projectName = "content-jenkins-java-project";
+        String username = "linuxacademy";
+
 //        String projectName = "maven-helloworld";
 //        String username = "amuniz";
         String repoURL = "https://github.com/" + username + "/" + projectName + ".git";
@@ -173,6 +176,18 @@ public class Main {
         // Create a new empty project on Gitlab
         Project newProject = null;
         ProjectApi projectApi = gitLabApi.getProjectApi();
+        // TODO Remove code that deletes all Gitlab projects
+        try {
+            List<Project> projectList = projectApi.getProjects();
+            for (Project p : projectList) {
+                System.out.println("Deleting Project: " + p);
+                projectApi.deleteProject(p);
+            }
+        } catch (GitLabApiException e) {
+            System.err.println("Caught Exception for Gitlab Project API: " + e.getMessage());
+        }
+
+
         //TODO First check if this project name already exists in Gitlab
         String projectDescription = "Pulled from Github.com: " + username + " : " + projectName;
         //String importUrl = "https://github.com/amuniz/maven-helloworld.git";
@@ -189,7 +204,10 @@ public class Main {
         String jenkinsHostUrl = "http://10.0.2.15:8081";
         //String webhookUrl = jenkinsHostUrl + "/project/" + projectName;
         //String webhookUrl = jenkinsHostUrl + "/project/Maven-Hello-TestImport2";
-        String webhookUrl = jenkinsHostUrl + "/project/simple-java-maven-app";
+        // TODO change jenkinsJob to projectName
+        //String jenkinsJob = projectName;
+        String jenkinsJob = "TestPipeline";
+        String webhookUrl = jenkinsHostUrl + "/project/" + jenkinsJob;
         ProjectHook webhook = null;
         System.out.println("Creating Gitlab to Jenkins webhook: " + webhookUrl);
         try {
@@ -202,7 +220,7 @@ public class Main {
         // TODO Please update the username and password according to your Jenkins setup
         String jenkinsUsername = "admin";
         String jenkinsPassword = "admin";
-        System.out.println("Creating a Jenkins job for this project: " + jenkinsHostUrl + "/job/" + projectName);
+        System.out.println("Creating a Jenkins job for this project: " + jenkinsHostUrl + "/job/" + jenkinsJob);
         try {
             URI jenkinsUri = new URI(jenkinsHostUrl + "/");
             JenkinsServer jenkins = null;
