@@ -47,10 +47,13 @@ import javax.xml.transform.Transformer;
 
 public class Main {
 
-    public static void main(String[] args) {
+    public static String customJenkinsJobXML(String gitlabHostUrl, String projectName){
 
+        String jobXml = "<project><actions/><description>This is a free style job</description><keepDependencies>false</keepDependencies><properties><jenkins.model.BuildDiscarderProperty><strategy class=\"hudson.tasks.LogRotator\"><daysToKeep>-1</daysToKeep><numToKeep>1</numToKeep><artifactDaysToKeep>-1</artifactDaysToKeep><artifactNumToKeep>-1</artifactNumToKeep></strategy></jenkins.model.BuildDiscarderProperty><com.dabsquared.gitlabjenkins.connection.GitLabConnectionProperty plugin=\"gitlab-plugin@1.5.3\"><gitLabConnection>GitlabViren</gitLabConnection></com.dabsquared.gitlabjenkins.connection.GitLabConnectionProperty><org.jenkinsci.plugins.gitlablogo.GitlabLogoProperty plugin=\"gitlab-logo@1.0.3\"><repositoryName/></org.jenkinsci.plugins.gitlablogo.GitlabLogoProperty></properties><scm class=\"hudson.plugins.git.GitSCM\" plugin=\"git@3.8.0\"><configVersion>2</configVersion><userRemoteConfigs><hudson.plugins.git.UserRemoteConfig><name>origin</name><refspec>+refs/heads/*:refs/remotes/origin/* +refs/merge-requests/*/head:refs/remotes/origin/merge-requests/*</refspec><url>http://10.0.2.15/root/example-groovy.git</url><credentialsId>449eaaad-4ce3-4cd7-88e4-fbda5b6cb318</credentialsId></hudson.plugins.git.UserRemoteConfig></userRemoteConfigs><branches><hudson.plugins.git.BranchSpec><name>*/master</name></hudson.plugins.git.BranchSpec></branches><doGenerateSubmoduleConfigurations>false</doGenerateSubmoduleConfigurations><browser class=\"hudson.plugins.git.browser.GitLab\"><url>http://10.0.2.15/root/example-groovy</url><version>10.5</version></browser><submoduleCfg class=\"list\"/><extensions/></scm><canRoam>true</canRoam><disabled>false</disabled><blockBuildWhenDownstreamBuilding>false</blockBuildWhenDownstreamBuilding><blockBuildWhenUpstreamBuilding>false</blockBuildWhenUpstreamBuilding><triggers><com.dabsquared.gitlabjenkins.GitLabPushTrigger plugin=\"gitlab-plugin@1.5.3\"><spec/><triggerOnPush>true</triggerOnPush><triggerOnMergeRequest>true</triggerOnMergeRequest><triggerOnPipelineEvent>false</triggerOnPipelineEvent><triggerOnAcceptedMergeRequest>true</triggerOnAcceptedMergeRequest><triggerOnClosedMergeRequest>true</triggerOnClosedMergeRequest><triggerOnApprovedMergeRequest>true</triggerOnApprovedMergeRequest><triggerOpenMergeRequestOnPush>never</triggerOpenMergeRequestOnPush><triggerOnNoteRequest>true</triggerOnNoteRequest><noteRegex>Jenkins please retry a build</noteRegex><ciSkip>true</ciSkip><skipWorkInProgressMergeRequest>true</skipWorkInProgressMergeRequest><setBuildDescription>true</setBuildDescription><branchFilterType>All</branchFilterType><includeBranchesSpec/><excludeBranchesSpec/><targetBranchRegex/><secretToken>{AQAAABAAAAAQd9GNVd4u7oQlWZAHd3dYcsfoOx1jXSPneEY7Mp5xX2I=}</secretToken></com.dabsquared.gitlabjenkins.GitLabPushTrigger></triggers><concurrentBuild>false</concurrentBuild><builders><hudson.tasks.Maven><targets>clean install</targets><usePrivateRepository>false</usePrivateRepository><settings class=\"jenkins.mvn.DefaultSettingsProvider\"/><globalSettings class=\"jenkins.mvn.DefaultGlobalSettingsProvider\"/><injectBuildVariables>false</injectBuildVariables></hudson.tasks.Maven></builders><publishers><hudson.tasks.junit.JUnitResultArchiver plugin=\"junit@1.24\"><testResults>target/surefire-reports/*.xml</testResults><keepLongStdio>false</keepLongStdio><healthScaleFactor>1.0</healthScaleFactor><allowEmptyResults>true</allowEmptyResults></hudson.tasks.junit.JUnitResultArchiver><hudson.plugins.jacoco.JacocoPublisher plugin=\"jacoco@3.0.1\"><execPattern>**/**.exec</execPattern><classPattern>**/classes</classPattern><sourcePattern>**/src/main/java</sourcePattern><inclusionPattern/><exclusionPattern/><skipCopyOfSrcFiles>false</skipCopyOfSrcFiles><minimumInstructionCoverage>0</minimumInstructionCoverage><minimumBranchCoverage>0</minimumBranchCoverage><minimumComplexityCoverage>0</minimumComplexityCoverage><minimumLineCoverage>0</minimumLineCoverage><minimumMethodCoverage>0</minimumMethodCoverage><minimumClassCoverage>0</minimumClassCoverage><maximumInstructionCoverage>0</maximumInstructionCoverage><maximumBranchCoverage>0</maximumBranchCoverage><maximumComplexityCoverage>0</maximumComplexityCoverage><maximumLineCoverage>0</maximumLineCoverage><maximumMethodCoverage>0</maximumMethodCoverage><maximumClassCoverage>0</maximumClassCoverage><changeBuildStatus>false</changeBuildStatus><deltaInstructionCoverage>0</deltaInstructionCoverage><deltaBranchCoverage>0</deltaBranchCoverage><deltaComplexityCoverage>0</deltaComplexityCoverage><deltaLineCoverage>0</deltaLineCoverage><deltaMethodCoverage>0</deltaMethodCoverage><deltaClassCoverage>0</deltaClassCoverage><buildOverBuild>false</buildOverBuild></hudson.plugins.jacoco.JacocoPublisher><com.dabsquared.gitlabjenkins.publisher.GitLabCommitStatusPublisher plugin=\"gitlab-plugin@1.5.3\"><name>jenkins</name><markUnstableAsSuccess>false</markUnstableAsSuccess></com.dabsquared.gitlabjenkins.publisher.GitLabCommitStatusPublisher></publishers><buildWrappers><hudson.plugins.ws__cleanup.PreBuildCleanup plugin=\"ws-cleanup@0.34\"><deleteDirs>false</deleteDirs><cleanupParameter/><externalDelete/></hudson.plugins.ws__cleanup.PreBuildCleanup><hudson.plugins.timestamper.TimestamperBuildWrapper plugin=\"timestamper@1.8.9\"/></buildWrappers></project>";
+        String customJobXml = null;
 
-        String jobXml = "<project><actions/><description>This is a free style job</description><keepDependencies>false</keepDependencies><properties><jenkins.model.BuildDiscarderProperty><strategy class=\"hudson.tasks.LogRotator\"><daysToKeep>-1</daysToKeep><numToKeep>1</numToKeep><artifactDaysToKeep>-1</artifactDaysToKeep><artifactNumToKeep>-1</artifactNumToKeep></strategy></jenkins.model.BuildDiscarderProperty><com.dabsquared.gitlabjenkins.connection.GitLabConnectionProperty plugin=\"gitlab-plugin@1.5.3\"><gitLabConnection>GitlabViren</gitLabConnection></com.dabsquared.gitlabjenkins.connection.GitLabConnectionProperty><org.jenkinsci.plugins.gitlablogo.GitlabLogoProperty plugin=\"gitlab-logo@1.0.3\"><repositoryName/></org.jenkinsci.plugins.gitlablogo.GitlabLogoProperty></properties><scm class=\"hudson.plugins.git.GitSCM\" plugin=\"git@3.8.0\"><configVersion>2</configVersion><userRemoteConfigs><hudson.plugins.git.UserRemoteConfig><name>origin</name><refspec>+refs/heads/*:refs/remotes/origin/* +refs/merge-requests/*/head:refs/remotes/origin/merge-requests/*</refspec><url>http://10.0.2.15/root/example-groovy.git</url><credentialsId>449eaaad-4ce3-4cd7-88e4-fbda5b6cb318</credentialsId></hudson.plugins.git.UserRemoteConfig></userRemoteConfigs><branches><hudson.plugins.git.BranchSpec><name>*/master</name></hudson.plugins.git.BranchSpec></branches><doGenerateSubmoduleConfigurations>false</doGenerateSubmoduleConfigurations><browser class=\"hudson.plugins.git.browser.GitLab\"><url>http://10.0.2.15/root/example-groovy</url><version>10.5</version></browser><submoduleCfg class=\"list\"/><extensions/></scm><canRoam>true</canRoam><disabled>false</disabled><blockBuildWhenDownstreamBuilding>false</blockBuildWhenDownstreamBuilding><blockBuildWhenUpstreamBuilding>false</blockBuildWhenUpstreamBuilding><triggers><com.dabsquared.gitlabjenkins.GitLabPushTrigger plugin=\"gitlab-plugin@1.5.3\"><spec/><triggerOnPush>true</triggerOnPush><triggerOnMergeRequest>true</triggerOnMergeRequest><triggerOnPipelineEvent>false</triggerOnPipelineEvent><triggerOnAcceptedMergeRequest>true</triggerOnAcceptedMergeRequest><triggerOnClosedMergeRequest>true</triggerOnClosedMergeRequest><triggerOnApprovedMergeRequest>true</triggerOnApprovedMergeRequest><triggerOpenMergeRequestOnPush>never</triggerOpenMergeRequestOnPush><triggerOnNoteRequest>true</triggerOnNoteRequest><noteRegex>Jenkins please retry a build</noteRegex><ciSkip>true</ciSkip><skipWorkInProgressMergeRequest>true</skipWorkInProgressMergeRequest><setBuildDescription>true</setBuildDescription><branchFilterType>All</branchFilterType><includeBranchesSpec/><excludeBranchesSpec/><targetBranchRegex/><secretToken>{AQAAABAAAAAQd9GNVd4u7oQlWZAHd3dYcsfoOx1jXSPneEY7Mp5xX2I=}</secretToken></com.dabsquared.gitlabjenkins.GitLabPushTrigger></triggers><concurrentBuild>false</concurrentBuild><builders><hudson.tasks.Maven><targets>clean install</targets><usePrivateRepository>false</usePrivateRepository><settings class=\"jenkins.mvn.DefaultSettingsProvider\"/><globalSettings class=\"jenkins.mvn.DefaultGlobalSettingsProvider\"/><injectBuildVariables>false</injectBuildVariables></hudson.tasks.Maven></builders><publishers><hudson.tasks.junit.JUnitResultArchiver plugin=\"junit@1.24\"><testResults>target/surefire-reports/*.xml</testResults><keepLongStdio>false</keepLongStdio><healthScaleFactor>1.0</healthScaleFactor><allowEmptyResults>true</allowEmptyResults></hudson.tasks.junit.JUnitResultArchiver><hudson.plugins.jacoco.JacocoPublisher plugin=\"jacoco@3.0.1\"><execPattern>**/**.exec</execPattern><classPattern>**/classes</classPattern><sourcePattern>**/src/main/java</sourcePattern><inclusionPattern/><exclusionPattern/><skipCopyOfSrcFiles>false</skipCopyOfSrcFiles><minimumInstructionCoverage>0</minimumInstructionCoverage><minimumBranchCoverage>0</minimumBranchCoverage><minimumComplexityCoverage>0</minimumComplexityCoverage><minimumLineCoverage>0</minimumLineCoverage><minimumMethodCoverage>0</minimumMethodCoverage><minimumClassCoverage>0</minimumClassCoverage><maximumInstructionCoverage>0</maximumInstructionCoverage><maximumBranchCoverage>0</maximumBranchCoverage><maximumComplexityCoverage>0</maximumComplexityCoverage><maximumLineCoverage>0</maximumLineCoverage><maximumMethodCoverage>0</maximumMethodCoverage><maximumClassCoverage>0</maximumClassCoverage><changeBuildStatus>false</changeBuildStatus><deltaInstructionCoverage>0</deltaInstructionCoverage><deltaBranchCoverage>0</deltaBranchCoverage><deltaComplexityCoverage>0</deltaComplexityCoverage><deltaLineCoverage>0</deltaLineCoverage><deltaMethodCoverage>0</deltaMethodCoverage><deltaClassCoverage>0</deltaClassCoverage><buildOverBuild>false</buildOverBuild></hudson.plugins.jacoco.JacocoPublisher><com.dabsquared.gitlabjenkins.publisher.GitLabCommitStatusPublisher plugin=\"gitlab-plugin@1.5.3\"><name>jenkins</name><markUnstableAsSuccess>false</markUnstableAsSuccess></com.dabsquared.gitlabjenkins.publisher.GitLabCommitStatusPublisher></publishers><buildWrappers><hudson.plugins.ws__cleanup.PreBuildCleanup plugin=\"ws-cleanup@0.34\"><deleteDirs>false</deleteDirs><cleanupParameter/><externalDelete/></hudson.plugins.ws__cleanup.PreBuildCleanup><hudson.plugins.timestamper.TimestamperBuildWrapper plugin=\"timestamper@1.8.9\"/></buildWrappers></project>"
+        String XMLUrlRepositoryName = gitlabHostUrl + "/root/" +projectName;
+        String XMLUrlRepositoryGit = gitlabHostUrl + "/root/" +projectName + ".git";
 
         // XML parser code from tutorial:
         // https://www.ibm.com/developerworks/library/j-pg05199/index.html
@@ -67,25 +70,22 @@ public class Main {
 
             for (int i = 0; i < nodeList.getLength(); i++) {
                 Node node = nodeList.item(i);
-                if ((node.getNodeType() == Node.ELEMENT_NODE) && (node.getNodeName() == "repositoryName")) {
-                    //Print every tag
-                    System.out.println(node.getNodeName());
-                    //Replace text with new content
-                    node.setTextContent("REPOSITORY_NAME_REPLACEMENT");
-                    //Print the new content
-                    System.out.println(node.getTextContent());
+                //Replace project URL path
+                if ((node.getNodeType() == Node.ELEMENT_NODE) && (node.getNodeName() == "url")
+                        && (node.getParentNode().getNodeName() == "hudson.plugins.git.UserRemoteConfig")) {
+
+                    node.setTextContent(XMLUrlRepositoryName);
                 }
-                else if (node.getNodeType() == Node.ELEMENT_NODE) {
-                    //Print every tag
-                    System.out.println(node.getNodeName());
-                    //Print all the contents of the tags
-                    System.out.println(node.getTextContent());
+                //Replace project .git file URL path
+                else if ((node.getNodeType() == Node.ELEMENT_NODE) && (node.getNodeName() == "url")
+                        && (node.getNextSibling().getNodeName() == "version")) {
+
+                    node.setTextContent(XMLUrlRepositoryGit);
                 }
             }
 
             //Convert Nodelist with modified tags/content to a String
             //Reference: https://codereview.stackexchange.com/questions/106480/converting-partial-xml-node-list-to-a-string
-            System.out.println("Size of nodelist: " + nodeList.getLength());
 
             DOMSource source = new DOMSource();
             StringWriter writer = new StringWriter();
@@ -97,8 +97,8 @@ public class Main {
             source.setNode(nodeList.item(0));
             transformer.transform(source, result);
 
-            String xml_string = writer.toString();
-            System.out.println("New XML String \n" + xml_string);
+            customJobXml = writer.toString();
+            //System.out.println("New XML String \n" + customJobXml);
 
         } catch (ParserConfigurationException pce) {
             pce.printStackTrace();
@@ -111,6 +111,14 @@ public class Main {
             te.printStackTrace();
         }
 
+        return customJobXml;
+    }
+
+    public static void main(String[] args) {
+
+
+        String xmlString = customJenkinsJobXML("localhost", "my-repo");
+        System.out.println(xmlString);
 
         /*
 
@@ -193,6 +201,7 @@ public class Main {
         //TODO Please update the following for your setup
         String gitlabHostUrl = "http://10.0.2.15";
         String apiAccessToken = "RDtCnzMezmjpih4u6VDm";
+
 
         // Retrieve Gitlab API Instance
         GitLabApi gitLabApi = null;
