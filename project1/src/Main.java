@@ -1,8 +1,6 @@
-/*
 import com.offbytwo.jenkins.JenkinsServer;
 import com.offbytwo.jenkins.client.JenkinsHttpClient;
 import com.offbytwo.jenkins.model.Job;
-*/
 
 import org.eclipse.egit.github.core.*;
 import org.eclipse.egit.github.core.client.GitHubClient;
@@ -74,13 +72,13 @@ public class Main {
                 if ((node.getNodeType() == Node.ELEMENT_NODE) && (node.getNodeName() == "url")
                         && (node.getParentNode().getNodeName() == "hudson.plugins.git.UserRemoteConfig")) {
 
-                    node.setTextContent(XMLUrlRepositoryName);
+                    node.setTextContent(XMLUrlRepositoryGit);
                 }
                 //Replace project .git file URL path
                 else if ((node.getNodeType() == Node.ELEMENT_NODE) && (node.getNodeName() == "url")
                         && (node.getNextSibling().getNodeName() == "version")) {
 
-                    node.setTextContent(XMLUrlRepositoryGit);
+                    node.setTextContent(XMLUrlRepositoryName);
                 }
             }
 
@@ -115,11 +113,6 @@ public class Main {
     }
 
     public static void main(String[] args) {
-
-
-        String xmlString = customJenkinsJobXML("localhost", "my-repo");
-        System.out.println(xmlString);
-
         /*
 
         GitHubClient client = new GitHubClient();
@@ -174,7 +167,7 @@ public class Main {
                 System.err.println("Caught IOException: " + e.getMessage());
             }
         }
-
+        */
 
         //TODO Update following variables based on repositories from Github search
         String projectName = "example-groovy";
@@ -223,7 +216,7 @@ public class Main {
         try {
             List<Project> projectList = projectApi.getProjects();
             for (Project p : projectList) {
-                System.out.println("Deleting Project: " + p);
+                System.out.println("Deleting Project: " + p.getName());
                 projectApi.deleteProject(p);
             }
         } catch (GitLabApiException e) {
@@ -246,8 +239,8 @@ public class Main {
         //TODO Please update the localhost/ip:port number according to your Jenkins setup (localhost = 10.0.2.15)
         String jenkinsHostUrl = "http://10.0.2.15:8081";
         // TODO change jenkinsJob to projectName
-        //String jenkinsJob = projectName;
-        String jenkinsJob = "TestFreestyle";
+        String jenkinsJob = projectName;
+        //String jenkinsJob = "TestFreestyle";
         String webhookUrl = jenkinsHostUrl + "/project/" + jenkinsJob;
         ProjectHook webhook = null;
         System.out.println("Creating Gitlab to Jenkins webhook: " + webhookUrl);
@@ -267,7 +260,8 @@ public class Main {
             JenkinsServer jenkins = null;
             jenkins = new JenkinsServer(jenkinsUri, jenkinsUsername, jenkinsPassword);
             System.out.println("\t - Jenkins Running?: " + jenkins.isRunning()  );
-            //jenkins.createJob("JenkinsApiTest", jobXml);
+            String jobXml = customJenkinsJobXML(gitlabHostUrl, projectName);
+            jenkins.createJob(projectName, jobXml);
             Map<String, Job> jobs = jenkins.getJobs();
             System.out.println("\t - Jobs: " + jobs);
 
@@ -312,6 +306,5 @@ public class Main {
         } catch (IOException e) {
             System.err.println("Caught IOException: " + e.getMessage());
         }
-        */
     }
 }
