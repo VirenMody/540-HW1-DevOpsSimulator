@@ -62,32 +62,29 @@ public class Main {
 
             //Traversal code from Stack Overflow:
             //  https://stackoverflow.com/questions/5386991/java-most-efficient-method-to-iterate-over-all-elements-in-a-org-w3c-dom-docume
-            //  Go through the XML string, print every tag
+            //  Go through the XML string, print every tag, modify necessary tags
             NodeList nodeList = doc.getElementsByTagName("*");
-
-            System.out.println("Size of nodelist: " + nodeList.getLength());
 
             for (int i = 0; i < nodeList.getLength(); i++) {
                 Node node = nodeList.item(i);
                 if ((node.getNodeType() == Node.ELEMENT_NODE) && (node.getNodeName() == "repositoryName")) {
                     //Print every tag
-                    System.out.println("**********************");
                     System.out.println(node.getNodeName());
-                    //Print all the contents of the tags
+                    //Replace text with new content
                     node.setTextContent("REPOSITORY_NAME_REPLACEMENT");
+                    //Print the new content
                     System.out.println(node.getTextContent());
-                    //Note: There is also a setTextContent that changes the tag content!
                 }
                 else if (node.getNodeType() == Node.ELEMENT_NODE) {
                     //Print every tag
                     System.out.println(node.getNodeName());
                     //Print all the contents of the tags
                     System.out.println(node.getTextContent());
-                    //Note: There is also a setTextContent that changes the tag content!
                 }
             }
 
-            /*  First Implementation of the exporting to XML
+            //Convert Nodelist with modified tags/content to a String
+            //Reference: https://codereview.stackexchange.com/questions/106480/converting-partial-xml-node-list-to-a-string
             System.out.println("Size of nodelist: " + nodeList.getLength());
 
             DOMSource source = new DOMSource();
@@ -97,34 +94,11 @@ public class Main {
             Transformer transformer = TransformerFactory.newInstance().newTransformer();
             transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
 
-
-            for (int i = 0; i < nodeList.getLength(); ++i) {
-                source.setNode(nodeList.item(i));
-                transformer.transform(source, result);
-            }
+            source.setNode(nodeList.item(0));
+            transformer.transform(source, result);
 
             String xml_string = writer.toString();
-            System.out.println("my new xml string" + xml_string);
-            System.out.println("source to string" + source.toString());
-            */
-
-            Document newXmlDocument = DocumentBuilderFactory.newInstance().newDocumentBuilder().newDocument();
-            Element root = newXmlDocument.createElement("project");
-            newXmlDocument.appendChild(root);
-            for (int i = 1; i < nodeList.getLength(); i++) {
-                if (nodeList.item(i).getNodeType() == Node.ELEMENT_NODE) {
-                    Node node = nodeList.item(i);
-                    Node copyNode = newXmlDocument.importNode(node, true);
-                    root.appendChild(copyNode);
-                }
-            }
-
-            DOMImplementationLS domImplementationLS = (DOMImplementationLS) newXmlDocument
-                    .getImplementation();
-            LSSerializer lsSerializer = domImplementationLS.createLSSerializer();
-            String string = lsSerializer.writeToString(newXmlDocument);
-            System.out.println("New xml string: " + string);
-
+            System.out.println("New XML String \n" + xml_string);
 
         } catch (ParserConfigurationException pce) {
             pce.printStackTrace();
@@ -133,12 +107,10 @@ public class Main {
         } catch (IOException ioe) {
             ioe.printStackTrace();
         }
-
-        /*From first implementation*/
-        /*catch (TransformerException te) {
+        catch (TransformerException te) {
             te.printStackTrace();
         }
-        */
+
 
         /*
 
