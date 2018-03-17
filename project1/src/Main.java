@@ -1,5 +1,4 @@
 import com.offbytwo.jenkins.JenkinsServer;
-import com.offbytwo.jenkins.client.JenkinsHttpClient;
 import com.offbytwo.jenkins.model.Job;
 
 import org.eclipse.egit.github.core.*;
@@ -7,17 +6,14 @@ import org.eclipse.egit.github.core.client.GitHubClient;
 import org.eclipse.egit.github.core.service.*;
 import org.eclipse.jgit.api.PushCommand;
 import org.eclipse.jgit.api.RemoteAddCommand;
-import org.eclipse.jgit.internal.storage.file.FileRepository;
 import org.eclipse.jgit.lib.StoredConfig;
 import org.eclipse.jgit.transport.URIish;
 import org.eclipse.jgit.transport.UsernamePasswordCredentialsProvider;
-
 
 import org.gitlab4j.api.GitLabApi;
 import org.gitlab4j.api.GitLabApiException;
 import org.gitlab4j.api.ProjectApi;
 import org.gitlab4j.api.models.Project;
-
 
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -28,12 +24,9 @@ import org.eclipse.jgit.api.errors.GitAPIException;
 import org.gitlab4j.api.models.ProjectHook;
 import org.gitlab4j.api.models.Visibility;
 
-
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.w3c.dom.*;
-import org.w3c.dom.ls.DOMImplementationLS;
-import org.w3c.dom.ls.LSSerializer;
 import javax.xml.parsers.*;
 import javax.xml.transform.*;
 import javax.xml.transform.dom.DOMSource;
@@ -164,18 +157,19 @@ public class Main {
 
     public static void main(String[] args) {
 
-        //TODO Please update the following for your setup
+        //TODO: Gitlab Settings - Please update the following for your setup
         String gitlabHostUrl = "http://10.0.2.15";
-        String apiAccessToken = "RDtCnzMezmjpih4u6VDm";
+        String gitlabApiAccessToken = "RDtCnzMezmjpih4u6VDm";
+
+        //TODO: Jenkins Settings - Please update the localhost/ip:port number according to your Jenkins setup (localhost = 10.0.2.15)
+        String jenkinsHostUrl = "http://10.0.2.15:8081";
         String jenkinsUsername = "admin";
         String jenkinsPassword = "admin";
-        //TODO Please update the localhost/ip:port number according to your Jenkins setup (localhost = 10.0.2.15)
-        String jenkinsHostUrl = "http://10.0.2.15:8081";
 
-        // Retrieve Gitlab API
+        //Retrieve Gitlab API
         GitLabApi gitLabApi = null;
         try {
-            gitLabApi = new GitLabApi(GitLabApi.ApiVersion.V3, gitlabHostUrl, apiAccessToken);
+            gitLabApi = new GitLabApi(GitLabApi.ApiVersion.V3, gitlabHostUrl, gitlabApiAccessToken);
             System.out.println("Gitlab API Instance = " + gitLabApi);
         } catch (Exception e) {
             System.err.println("Caught Exception for Gitlab API Access: " + e.getMessage());
