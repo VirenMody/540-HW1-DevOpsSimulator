@@ -52,7 +52,12 @@ public class Main {
 
         String XMLUrlRepositoryName = gitlabHostUrl + "/root/" +projectName;
         String XMLUrlRepositoryGit = gitlabHostUrl + "/root/" +projectName + ".git";
-
+        String understandCommand = "export PATH=$PATH:/home/dhananjay/Downloads/scitools/bin/linux64/\n" +
+        "und\n" +
+        "create -db newdb.udb -languages java\n" +
+        "add /home/dhananjay/test/\n" +
+        "analyze newdb.udb\n" +
+        "report newdb.udb";
         // XML parser code from tutorial:
         // https://www.ibm.com/developerworks/library/j-pg05199/index.html
         DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
