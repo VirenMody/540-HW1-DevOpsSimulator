@@ -63,11 +63,10 @@ public class Main {
         String UNDERSTAND_PATH = "/home/virenmody/Downloads/scitools/bin/linux64/";
         String CLONED_REPOS_PATH = "/home/virenmody/ClonedRepos/" + projectName + "/";
         String understandScript = "export PATH=$PATH:" + UNDERSTAND_PATH + "\n" +
-                                    "und\n" +
-                                    "create -db newdb.udb -languages java\n" +
-                                    "add " + CLONED_REPOS_PATH + "\n" +
-                                    "analyze newdb.udb\n" +
-                                    "report newdb.udb";
+                                    "und create -db project.udb -languages java\n" +
+                                    "und add -db project.udb " + CLONED_REPOS_PATH + "\n" +
+                                    "und -db project.udb analyze \n" +
+                                    "und -db project.udb report";
 
         // XML parser code from tutorial:
         // https://www.ibm.com/developerworks/library/j-pg05199/index.html
