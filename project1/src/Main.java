@@ -112,7 +112,76 @@ public class Main {
         return customJobXml;
     }
 
+    public static void removeAllGitlabProjects(ProjectApi projectApi) {
+
+        // Delete all Gitlab projects
+        try {
+            List<Project> projectList = projectApi.getProjects();
+            for (Project p : projectList) {
+                System.out.println("Deleting Gitlab Project: " + p.getName());
+                projectApi.deleteProject(p);
+            }
+        } catch (GitLabApiException e) {
+            System.err.println("Caught Exception for Gitlab Project API: " + e.getMessage());
+        }
+
+    }
+
+    public static void removeAllJenkinsJobs(JenkinsServer jenkins) {
+
+        try {
+            Map<String, Job> jobsMap = jenkins.getJobs();
+            System.out.println("\t - Jobs: " + jobsMap);
+
+            for(Job job : jobsMap.values()) {
+                System.out.println("Deleting Jenkins Project: " + job.getName());
+                jenkins.deleteJob(job.getName());
+            }
+
+        } catch (IOException e) {
+            System.err.println("Caught IOException for Jenkins jobs retrieval: " + e.getMessage());
+        }
+
+    }
+
     public static void main(String[] args) {
+
+        //TODO Please update the following for your setup
+        String gitlabHostUrl = "http://10.0.2.15";
+        String apiAccessToken = "RDtCnzMezmjpih4u6VDm";
+        String jenkinsUsername = "admin";
+        String jenkinsPassword = "admin";
+        //TODO Please update the localhost/ip:port number according to your Jenkins setup (localhost = 10.0.2.15)
+        String jenkinsHostUrl = "http://10.0.2.15:8081";
+
+        // Retrieve Gitlab API
+        GitLabApi gitLabApi = null;
+        try {
+            gitLabApi = new GitLabApi(GitLabApi.ApiVersion.V3, gitlabHostUrl, apiAccessToken);
+            System.out.println("Gitlab API Instance = " + gitLabApi);
+        } catch (Exception e) {
+            System.err.println("Caught Exception for Gitlab API Access: " + e.getMessage());
+            e.printStackTrace();
+        }
+
+        // Retrieve Gitlab Project API
+        ProjectApi projectApi = null;
+        if (gitLabApi != null) {
+            projectApi = gitLabApi.getProjectApi();
+        }
+        removeAllGitlabProjects(projectApi);
+
+
+        URI jenkinsUri = null;
+        JenkinsServer jenkins = null;
+
+        try {
+            jenkinsUri = new URI(jenkinsHostUrl + "/");
+            jenkins = new JenkinsServer(jenkinsUri, jenkinsUsername, jenkinsPassword);
+        } catch (URISyntaxException e) {
+            System.err.println("Caught URISyntaxException for Jenkins Server Retrieval: " + e.getMessage());
+        }
+        removeAllJenkinsJobs(jenkins);
 
         GitHubClient client = new GitHubClient();
 
@@ -156,39 +225,8 @@ public class Main {
                 System.err.println("Caught GitAPIException: " + e.getMessage());
             }
 
-            //TODO Please update the following for your setup
-            String gitlabHostUrl = "http://10.0.2.15";
-            String apiAccessToken = "RDtCnzMezmjpih4u6VDm";
-
-
-            // Retrieve Gitlab API Instance
-            GitLabApi gitLabApi = null;
-            try {
-                gitLabApi = new GitLabApi(GitLabApi.ApiVersion.V3, gitlabHostUrl, apiAccessToken);
-                System.out.println("Gitlab API Instance = " + gitLabApi);
-            } catch (Exception e) {
-                System.err.println("Caught Exception for Gitlab API Access: " + e.getMessage());
-                e.printStackTrace();
-            }
-
             // Create a new empty project on Gitlab
             Project newProject = null;
-            ProjectApi projectApi = null;
-            if (gitLabApi != null) {
-                projectApi = gitLabApi.getProjectApi();
-            }
-            // TODO Remove code that deletes all Gitlab projects
-            try {
-                List<Project> projectList = projectApi.getProjects();
-                for (Project p : projectList) {
-                    System.out.println("Deleting Project: " + p.getName());
-                    projectApi.deleteProject(p);
-                }
-            } catch (GitLabApiException e) {
-                System.err.println("Caught Exception for Gitlab Project API: " + e.getMessage());
-            }
-
-
             //TODO First check if this project name already exists in Gitlab
             String projectDescription = "Pulled from Github.com: " + username + " : " + projectName;
             //String importUrl = "https://github.com/amuniz/maven-helloworld.git";
@@ -201,8 +239,6 @@ public class Main {
             }
 
             // Create a Jenkins webhook for the project
-            //TODO Please update the localhost/ip:port number according to your Jenkins setup (localhost = 10.0.2.15)
-            String jenkinsHostUrl = "http://10.0.2.15:8081";
             // TODO change jenkinsJob to projectName
             String jenkinsJob = projectName;
             //String jenkinsJob = "TestFreestyle";
@@ -216,22 +252,10 @@ public class Main {
             }
 
             // Create a Jenkins Job for the project
-            // TODO Please update the username and password according to your Jenkins setup
-            String jenkinsUsername = "admin";
-            String jenkinsPassword = "admin";
             System.out.println("Creating a Jenkins job for this project: " + jenkinsHostUrl + "/job/" + jenkinsJob);
             try {
-                URI jenkinsUri = new URI(jenkinsHostUrl + "/");
-                JenkinsServer jenkins = null;
-                jenkins = new JenkinsServer(jenkinsUri, jenkinsUsername, jenkinsPassword);
-                System.out.println("\t - Jenkins Running?: " + jenkins.isRunning()  );
                 String jobXml = customJenkinsJobXML(gitlabHostUrl, projectName);
                 jenkins.createJob(projectName, jobXml);
-                Map<String, Job> jobs = jenkins.getJobs();
-                System.out.println("\t - Jobs: " + jobs);
-
-            } catch (URISyntaxException e) {
-                System.err.println("Caught URISyntaxException for Jenkins Server Retrieval: " + e.getMessage());
             } catch (IOException e) {
                 System.err.println("Caught IOException for Jenkins jobs retrieval: " + e.getMessage());
                 e.printStackTrace();
