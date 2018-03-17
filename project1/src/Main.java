@@ -5,15 +5,14 @@ import com.offbytwo.jenkins.model.Job;
 import org.eclipse.egit.github.core.*;
 import org.eclipse.egit.github.core.client.GitHubClient;
 import org.eclipse.egit.github.core.service.*;
-import com.google.gson.*;
 import org.eclipse.jgit.api.PushCommand;
 import org.eclipse.jgit.api.RemoteAddCommand;
 import org.eclipse.jgit.internal.storage.file.FileRepository;
 import org.eclipse.jgit.lib.StoredConfig;
 import org.eclipse.jgit.transport.URIish;
 import org.eclipse.jgit.transport.UsernamePasswordCredentialsProvider;
-import org.gitlab.api.GitlabAPI;
-import org.gitlab.api.models.GitlabProject;
+
+
 import org.gitlab4j.api.GitLabApi;
 import org.gitlab4j.api.GitLabApiException;
 import org.gitlab4j.api.ProjectApi;
