@@ -1,6 +1,8 @@
+/*
 import com.offbytwo.jenkins.JenkinsServer;
 import com.offbytwo.jenkins.client.JenkinsHttpClient;
 import com.offbytwo.jenkins.model.Job;
+*/
 
 import org.eclipse.egit.github.core.*;
 import org.eclipse.egit.github.core.client.GitHubClient;
@@ -33,7 +35,14 @@ import org.gitlab4j.api.models.Visibility;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.w3c.dom.*;
+import org.w3c.dom.ls.DOMImplementationLS;
+import org.w3c.dom.ls.LSSerializer;
 import javax.xml.parsers.*;
+import javax.xml.transform.*;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
+import javax.xml.transform.Transformer;
+
 
 
 public class Main {
@@ -55,9 +64,21 @@ public class Main {
             //  https://stackoverflow.com/questions/5386991/java-most-efficient-method-to-iterate-over-all-elements-in-a-org-w3c-dom-docume
             //  Go through the XML string, print every tag
             NodeList nodeList = doc.getElementsByTagName("*");
+
+            System.out.println("Size of nodelist: " + nodeList.getLength());
+
             for (int i = 0; i < nodeList.getLength(); i++) {
                 Node node = nodeList.item(i);
-                if (node.getNodeType() == Node.ELEMENT_NODE) {
+                if ((node.getNodeType() == Node.ELEMENT_NODE) && (node.getNodeName() == "repositoryName")) {
+                    //Print every tag
+                    System.out.println("**********************");
+                    System.out.println(node.getNodeName());
+                    //Print all the contents of the tags
+                    node.setTextContent("REPOSITORY_NAME_REPLACEMENT");
+                    System.out.println(node.getTextContent());
+                    //Note: There is also a setTextContent that changes the tag content!
+                }
+                else if (node.getNodeType() == Node.ELEMENT_NODE) {
                     //Print every tag
                     System.out.println(node.getNodeName());
                     //Print all the contents of the tags
@@ -66,6 +87,45 @@ public class Main {
                 }
             }
 
+            /*  First Implementation of the exporting to XML
+            System.out.println("Size of nodelist: " + nodeList.getLength());
+
+            DOMSource source = new DOMSource();
+            StringWriter writer = new StringWriter();
+            StreamResult result = new StreamResult(writer);
+
+            Transformer transformer = TransformerFactory.newInstance().newTransformer();
+            transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
+
+
+            for (int i = 0; i < nodeList.getLength(); ++i) {
+                source.setNode(nodeList.item(i));
+                transformer.transform(source, result);
+            }
+
+            String xml_string = writer.toString();
+            System.out.println("my new xml string" + xml_string);
+            System.out.println("source to string" + source.toString());
+            */
+
+            Document newXmlDocument = DocumentBuilderFactory.newInstance().newDocumentBuilder().newDocument();
+            Element root = newXmlDocument.createElement("project");
+            newXmlDocument.appendChild(root);
+            for (int i = 1; i < nodeList.getLength(); i++) {
+                if (nodeList.item(i).getNodeType() == Node.ELEMENT_NODE) {
+                    Node node = nodeList.item(i);
+                    Node copyNode = newXmlDocument.importNode(node, true);
+                    root.appendChild(copyNode);
+                }
+            }
+
+            DOMImplementationLS domImplementationLS = (DOMImplementationLS) newXmlDocument
+                    .getImplementation();
+            LSSerializer lsSerializer = domImplementationLS.createLSSerializer();
+            String string = lsSerializer.writeToString(newXmlDocument);
+            System.out.println("New xml string: " + string);
+
+
         } catch (ParserConfigurationException pce) {
             pce.printStackTrace();
         } catch (SAXException se) {
@@ -73,6 +133,12 @@ public class Main {
         } catch (IOException ioe) {
             ioe.printStackTrace();
         }
+
+        /*From first implementation*/
+        /*catch (TransformerException te) {
+            te.printStackTrace();
+        }
+        */
 
         /*
 
