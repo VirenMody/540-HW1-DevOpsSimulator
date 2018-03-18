@@ -131,14 +131,7 @@ Please follow these steps:
     - Select Build Program
     - Select Run
 
-
-* Go to project1 directory
-
-    - cd project1
-    
-* Build and run project using Gradle Wrapper run command `./gradlew run`
-
-#### Analysis Report
+### Analysis Report
   
-The analysis report is being generated at the particular job's folder under the jenkins workspace directory as a .txt and html files on your local machine. Kidnly, visit the folders to access the reports.
+The analysis report is being generated at the particular job's folder under the jenkins workspace directory as a `.txt` and html files on your local machine. Kindly, visit the folders to access the reports.
 Example: under the /var/lib/jenkins/workspace/"JobName". The job name is the name of the Repository being analyzed.  
