@@ -7,6 +7,7 @@ The project is implemented in Java and built with Gradle.  GitHub, GitLab, and J
  
 We were able to successfully perform a stress test of our Java application by pushing 54 Github projects through our DevOps simulation without error. From the execution of our application to the last job being built in Jenkins, it took approximately 20 minutes. 25 out of the 54 applications built successfully some of which had included JaCoCo code coverage, unit testing results, and produced Understand code analysis. The remaining 29 failed for a variety of reasons such as missing pom.xml build file, failed unit tests, missing plugins, etc. Please note that our application only pulls the first 100 repository results of our GitHub.com query due to GitHub API limitations.  Despite this GitHub API limitation, during our stress test we found that 100 repositories was enough to produce a sufficient number of successful builds.    
 
+![Alt Text](https://i.imgur.com/EnXidFN.gif)
 
 Configuration Instructions
 --- 
