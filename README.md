@@ -1,4 +1,4 @@
-# Viren_Mody_Guillermo_Rojas_Hernandez_Dhananjay_Gupta.hw1
+# Authors: Viren Mody, Guillermo Rojas Hernandez, Dhananjay Gupta
 
 Configuration Instructions
 --- 
@@ -102,16 +102,17 @@ Please follow these steps:
 
   + Intellij instructions
 
-    - open up intellij
-    - select open
-    - open the hw1/project1 folder
-    - A window pops up: Import Project From Cradle
-    - The gradle project path should be the hw1/project1 path
-    - Select “Use auto-import”
-    - Select “Create separate module per source set”
-    - Select “Use default gradle wrapper”
-    - For Gradle JVM, use the 1.8 Java version 1.8 JDK
-    - Project Format: “.ipr (file based)”
+    - Open up Intellij
+    - In the welcome screen, select "Open"
+    - Navigate to the the hw1/project1 folder and select "Open"
+    - The "Import Project From Gradle" window should pop up.
+    - Select the following options:
+      - The gradle project path should be the hw1/project1 path
+      - Select “Use auto-import”
+      - Select “Create separate module per source set”
+      - Select “Use default gradle wrapper”
+      - For Gradle JVM, use the 1.8 Java version 1.8 JDK
+      - Project Format: “.ipr (file based)”
     - Select OK
     
   + Open up Main.java file and modify the variables under the TODO comments in both the customJenkinsJobXML function and the Main function
