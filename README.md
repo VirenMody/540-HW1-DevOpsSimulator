@@ -104,10 +104,10 @@ Please follow these steps:
 
     - Open up Intellij
     - In the welcome screen, select "Open"
-    - Navigate to the the hw1/project1 folder and select "Open"
+    - Navigate to the the viren_mody_guillermo_rojas_hernandez_dhananjay_gupta_hw1/project1 folder and select "Open"
     - The "Import Project From Gradle" window should pop up.
     - Select the following options:
-      - The gradle project path should be the hw1/project1 path
+      - The gradle project path should be the viren_mody_guillermo_rojas_hernandez_dhananjay_gupta_hw1/project1 path
       - Select “Use auto-import”
       - Select “Create separate module per source set”
       - Select “Use default gradle wrapper”
