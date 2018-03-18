@@ -1,3 +1,5 @@
+# Viren_Mody_Guillermo_Rojas_Hernandez_Dhananjay_Gupta.hw1
+
 Configuration Instructions
 --- 
 Please follow these steps:  
@@ -86,15 +88,37 @@ Please follow these steps:
 
 * Edit `Main.java` file with text editor or Intellij
 
-  + Text editor instructions:
-
-    - cd project1/src/
-    - vi Main.java
-
   + Intellij instructions
 
-    - Open up the project1 directory in Intellij
-    - Open up Main.java file and modify variables
+    - open up intellij
+    - select open
+    - open the hw1/project1 folder
+    - A window pops up: Import Project From Cradle
+    - The gradle project path should be the hw1/project1 path
+    - Select “Use auto-import”
+    - Select “Create separate module per source set”
+    - Select “Use default gradle wrapper”
+    - For Gradle JVM, use the 1.8 Java version 1.8.0_101 JDK
+    - Project Format: “.ipr (file based)”
+    - Select OK
+    
+  + Open up Main.java file and modify the variables under the TODO comments in both the customJenkinsJobXML function and the Main function
+
+    - `customJenkinsJobXML()`
+    - set `UNDERSTAND_PATH` to the location of the Understand installation, example: “/home/virenmody/Downloads/scitools/bin/linux64/”
+    - set `CLONED_REPOS_BASE_PATH` to the directory where you want cloned repositories installed locally, example: “/home/virenmody/ClonedRepos/”
+    - `Main()`
+    - set `GITLAB_URL` to IP address of the GitLab server, example: "http://10.0.2.15"
+    - set `GITLAB_API_ACCESS_TOKEN` to the access token from GitLab, example: “RDtCnzMezmjpih4u6VDm”
+    - set `GITLAB_USERNAME` to username used to access Gitlab server, example: “root”
+    - set `GITLAB_PASSWORD` to password used to access Gitlab server, example: “rootroot”
+    - set `JENKINS_URL` to Jenkins server url from configuration, Example: "http://10.0.2.15:8081"
+    - Set `JENKINS_USERNAME` to Jenkins server username, Example: “admin”
+    - Set `JENKINS_PASSWORD` to Jenkins server password, Example: “admin”
+    - Set `LOCAL_PATH` to the directory you want to save cloned repos
+    - Select Build Program
+    - Select Run
+
 
 * Go to project1 directory
 
@@ -113,14 +137,15 @@ Please follow the following steps:
 
      * through home `gedit .bashrc`  
      * To the bottom of the file, add line `export PATH=$PATH:/location of the unzipped scitools folder/bin/linux64` example: export PATH=$PATH:/home/dhananjay/Downloads/scitools/bin/linux64
-     * run Understand: `$ understand`and make sure to enter the license key and see if it is up and running.
+     * run `$ source .bashrc` to include the changes OR logout and login again for the changes to take effect.
+     * run Understand: `$ understand` and make sure to enter the license key and see if it is up and running.
      
 * Update the following variables in the `customJenkinsJobXML()` fucntion in the source code
 
-     * `UNDERSTAND_PATH`: to the PATH as on your machine. example : /home/dhananjay/Downloads/scitools/bin/linux64 
-     * `CLONED_REPOS_PATH`: to the path where you will be storing the downloaded repos on your local machine. Example: /home/dhananjay/ClonedRepos/
+     * `UNDERSTAND_PATH`: to the PATH as on your machine, example : /home/dhananjay/Downloads/scitools/bin/linux64 
+     * `CLONED_REPOS_PATH`: to the path where you will be storing the downloaded repos on your local machine, Example: /home/dhananjay/ClonedRepos/
 
 #### Analysis Report
   
-The analysis report is being generated at the particular job's folder under the jenkins workspace folder as a .txt and html files on your local machine. Kidnly, visit the folders to access the reports.
+The analysis report is being generated at the particular job's folder under the jenkins workspace directory as a .txt and html files on your local machine. Kidnly, visit the folders to access the reports.
 Example: under the /var/lib/jenkins/workspace/"JobName". The job name is the name of the Repository being analyzed.  
