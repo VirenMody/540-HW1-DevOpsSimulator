@@ -96,7 +96,7 @@ Please follow these steps:
 * Install gradle
 * Clone project repository from Bitbucket into directory:
 
-  + git clone https://drmark@bitbucket.org/guillermokrh/hw1.git
+  + git clone https://drmark@bitbucket.org/guillermokrh/viren_mody_guillermo_rojas_hernandez_dhananjay_gupta_hw1.git
 
 * Edit `Main.java` file with text editor or Intellij
 
