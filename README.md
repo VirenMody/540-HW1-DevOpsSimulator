@@ -84,7 +84,7 @@ Please follow these steps:
 * Install gradle
 * Clone project repository from Bitbucket into directory:
 
-  + git clone https://guillermokrh@bitbucket.org/guillermokrh/hw1.git
+  + git clone https://drmark@bitbucket.org/guillermokrh/hw1.git
 
 * Edit `Main.java` file with text editor or Intellij
 
@@ -142,6 +142,7 @@ Please follow the following steps:
      
 * Update the following variables in the `customJenkinsJobXML()` fucntion in the source code
 
+     *  Please make sure the underlying variables are modified. 
      * `UNDERSTAND_PATH`: to the PATH as on your machine, example : /home/dhananjay/Downloads/scitools/bin/linux64 
      * `CLONED_REPOS_PATH`: to the path where you will be storing the downloaded repos on your local machine, Example: /home/dhananjay/ClonedRepos/
 
